@@ -1,13 +1,16 @@
 from typing import Dict, List, Union
 from collections import defaultdict
 
+hashtags = "###################################################"
+g_header = "| STUDENT ID | Full name            | Course name | Mark"
+does_not_exist = "Student does not exist."
+
 
 class StudentDatabase:
     def __init__(self, filename: str):
         """Initializes the StudentDatabase class with the filename provided.
 
-        Args:
-            filename (str): Name of the file that contains the students' data.
+        :param filename: Name of the file that contains the students' data.
         """
         self.filename = filename
         self.students = self.file_to_dictionary()
@@ -18,8 +21,7 @@ class StudentDatabase:
         The keys of the dictionary are student IDs, and the values are lists
         containing information about each course the student has taken.
 
-        Returns:
-            Dict[str, List[List[Union[str, int]]]]: The dictionary of students data.
+        :return: The dictionary of students data.
         """
         students = {}
         with open(self.filename, 'r') as file:
@@ -40,6 +42,8 @@ class StudentDatabase:
         """Writes the student data from the dictionary to a file.
 
         Each line in the file represents a student's course and mark.
+
+        :return: None
         """
         with open(self.filename, 'w') as file:
             file.write("Student_id,student_first_name,student_last_name,course_code,mark\n")
@@ -83,7 +87,7 @@ class StudentDatabase:
         """
         _id = input("Enter the student's ID to be edited: ")
         if _id not in self.students:
-            print("Student does not exist.")
+            print(does_not_exist)
             return False
         self.print_student(_id)
         edit = input("Do you want to edit ? (Y/N): ")
@@ -114,7 +118,7 @@ class StudentDatabase:
         """
         _id = input("Enter the student's ID to be deleted: ")
         if _id not in self.students:
-            print("Student does not exist.")
+            print(does_not_exist)
             return False
         self.print_student(_id)
         delete = input("Do you want to delete ? (Y/N): ")
@@ -135,11 +139,11 @@ class StudentDatabase:
         :return: None
         """
         if _id not in self.students:
-            print("Student does not exist.")
+            print(does_not_exist)
             return
 
-        print("###################################################")
-        print("| STUDENT ID | Full name            | Course name | Mark")
+        print(hashtags)
+        print(g_header)
 
         for course in self.students[_id]:
             full_name = f"{course[0]} {course[1]}"
@@ -148,7 +152,7 @@ class StudentDatabase:
             # fill spaces on right until it reaches a width of X characters
             print(f"| {_id.ljust(10)} | {full_name.ljust(20)} | {course_code.ljust(11)} | {mark}")
 
-        print("###################################################")
+        print(hashtags)
 
     def delete_student(self, _id: str) -> bool:
         """Deletes a student from the database.
@@ -212,8 +216,8 @@ class StudentDatabase:
 
         :return: None
         """
-        print("###################################################")
-        print("| STUDENT ID | Full name            | Course name | Mark")
+        print(hashtags)
+        print(g_header)
 
         # Sort by full name (first name + last name)
         for _id, courses in sorted(self.students.items(), key=lambda x: f"{x[1][0][0]} {x[1][0][1]}"):
@@ -223,7 +227,7 @@ class StudentDatabase:
                 mark = str(course[3])
                 print(f"| {_id.ljust(10)} | {full_name.ljust(20)} | {course_code.ljust(11)} | {mark}")
 
-        print("###################################################")
+        print(hashtags)
 
     def report_by_course(self, course_name: str) -> None:
         """Prints the report of students who are enrolled in a specific course.
@@ -231,11 +235,12 @@ class StudentDatabase:
         :param course_name: The name of the course.
         :return: None
         """
-        print("###################################################")
-        print("| STUDENT ID | Full name            | Course name | Mark")
+        print(hashtags)
+        print(g_header)
 
         # Filter by course name and sort by mark
         for _id, courses in sorted(self.students.items(), key=lambda x:
+        # use iterator to get the first course with the same course name, if it does not exist, use None
         next((course for course in x[1] if course[2] == course_name), [None, None, None, 0])[3], reverse=True):
             for course in courses:
                 if course[2] != course_name:
@@ -245,7 +250,7 @@ class StudentDatabase:
                 mark = str(course[3])
                 print(f"| {_id.ljust(10)} | {full_name.ljust(20)} | {course_name.ljust(11)} | {mark}")
 
-        print("###################################################")
+        print(hashtags)
 
     def individual_report(self, _id: str) -> None:
         """Prints the report of a specific student.
@@ -260,7 +265,7 @@ class StudentDatabase:
         full_name = f"{self.students[_id][0][0]} {self.students[_id][0][1]}"
         average_mark = sum([course[3] for course in self.students[_id]]) / len(self.students[_id])
 
-        print("###################################################")
+        print(hashtags)
         print(f"| STUDENT ID: {_id}")
         print(f"| Full name: {full_name}")
         print(f"| Average: {average_mark}")
@@ -271,10 +276,14 @@ class StudentDatabase:
             mark = str(course[3])
             print(f"| {course_code.ljust(11)} | {mark}")
 
-        print("###################################################")
+        print(hashtags)
 
     def report_failed_courses(self) -> None:
-        """Prints the report of students who failed one or more courses."""
+        """
+        Prints the report of students who failed one or more courses.
+
+        :return: None
+        """
         print("Student ID | Full name       | Failed courses | Mark")
         for _id, courses in self.students.items():
             failed_courses = [(course[2], course[3]) for course in courses if course[3] < 50]
@@ -288,7 +297,11 @@ class StudentDatabase:
                         print(f"{course_code.ljust(14)} | {mark}")
 
     def report_highest_average(self) -> None:
-        """Prints the report of student(s) whose average is the highest in the school."""
+        """
+        Prints the report of student(s) whose average is the highest in the school.
+
+        :return: None
+        """
         averages = {_id: sum([course[3] for course in courses]) / len(courses) for _id, courses in
                     self.students.items()}
         max_average = max(averages.values())
@@ -300,7 +313,11 @@ class StudentDatabase:
             print(f"{_id.ljust(10)} | {full_name.ljust(15)} | {max_average}")
 
     def report_lowest_average(self) -> None:
-        """Prints the report of student(s) whose average is the lowest in the school."""
+        """
+        Prints the report of student(s) whose average is the lowest in the school.
+
+        :return: None
+        """
         averages = {_id: sum([course[3] for course in courses]) / len(courses) for _id, courses in
                     self.students.items()}
         min_average = min(averages.values())
@@ -312,7 +329,11 @@ class StudentDatabase:
             print(f"{_id.ljust(10)} | {full_name.ljust(15)} | {min_average}")
 
     def report_top_mark_in_each_course(self) -> None:
-        """Prints the report of students who got the top mark in each course."""
+        """
+        Prints the report of students who got the top mark in each course.
+
+        :return: None
+        """
         courses = defaultdict(list)
         for _id, data in self.students.items():
             for course in data:
