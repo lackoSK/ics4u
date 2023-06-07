@@ -36,3 +36,4 @@ Student_id,student_first_name,student_last_name,course_code,mark
 1015,Laura,Bird,MDM4U,23
 9999,Ladislav,Proc,MCV4U,34
 1022,Ladislav,proc,20121,1233
+2000,Khanh,Du,SCH3U,90

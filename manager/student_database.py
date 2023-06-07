@@ -10,6 +10,8 @@ class StudentDatabase:
     def __init__(self, filename: str):
         """Initializes the StudentDatabase class with the filename provided.
 
+        >>> db = StudentDatabase('students.txt')
+
         :param filename: Name of the file that contains the students' data.
         """
         self.filename = filename
@@ -20,6 +22,10 @@ class StudentDatabase:
 
         The keys of the dictionary are student IDs, and the values are lists
         containing information about each course the student has taken.
+
+        >>> students = db.file_to_dictionary()
+        >>> students.get('_id')
+        [['John', 'Doe', 'CS101', 85]]
 
         :return: The dictionary of students data.
         """
@@ -43,6 +49,9 @@ class StudentDatabase:
 
         Each line in the file represents a student's course and mark.
 
+        >>> db.dictionary_to_file()
+        The changes made to the students dictionary are now reflected in the file
+
         :return: None
         """
         with open(self.filename, 'w') as file:
@@ -54,6 +63,15 @@ class StudentDatabase:
     def add_student_interface(self) -> bool:
         """
         User interface for adding a new student.
+
+        >>> db.add_student_interface()
+        Enter the student's ID: 1001
+        Enter the student's first name: John
+        Enter the student's last name: Doe
+        Enter the course code: CS101
+        Enter the student's mark: 85
+        Student has been added.
+        True
 
         :return: True if the student is added successfully, False otherwise.
         """
@@ -82,6 +100,16 @@ class StudentDatabase:
     def edit_student_interface(self) -> bool:
         """
         User interface for editing a student's mark.
+
+        >>> db.edit_student_interface()
+        Enter the student's ID to be edited: 1001
+        | STUDENT ID | Full name            | Course name | Mark
+        | 1001       | John Doe             | CS101       | 85
+        Do you want to edit ? (Y/N): y
+        Enter the course you want to edit: CS101
+        Enter the new mark: 90
+        Student's mark has been updated.
+        True
 
         :return: True if the student's mark is edited successfully, False otherwise.
         """
@@ -114,6 +142,14 @@ class StudentDatabase:
         """
         User interface for deleting a student.
 
+        >>> db.delete_student_interface()
+        Enter the student's ID to be deleted: 1001
+        | STUDENT ID | Full name            | Course name | Mark
+        | 1001       | John Doe             | CS101       | 85
+        Do you want to delete ? (Y/N): y
+        Student has been deleted.
+        True
+
         :return: True if the student is deleted successfully, False otherwise.
         """
         _id = input("Enter the student's ID to be deleted: ")
@@ -134,6 +170,11 @@ class StudentDatabase:
 
     def print_student(self, _id: str) -> None:
         """Prints the information of a student.
+
+        >>> db.print_student('1001')
+        | STUDENT ID | Full name            | Course name | Mark
+        | 1001       | John Doe             | CS101       | 85
+
 
         :param _id: The student's ID.
         :return: None
@@ -170,6 +211,9 @@ class StudentDatabase:
     def add_student(self, _id: str, first_name: str, last_name: str, course_code: str, mark: int) -> bool:
         """Adds a new student to the students' dictionary.
 
+        >>> db.add_student('1002', 'Jane', 'Doe', 'CS101', 90)
+        True
+
         :param _id: The ID of the student.
         :param first_name: The first name of the student.
         :param last_name: The last name of the student.
@@ -189,6 +233,9 @@ class StudentDatabase:
         """Edits a student's mark for a specific course.
 
         If the course does not exist for the student, a new line of information for that student is created with that new course and mark.
+
+        >>> db.edit_student('1001', 'CS101', 90)
+        True
 
         :param _id: The ID of the student.
         :param course_code: The code of the course to edit.
@@ -214,6 +261,13 @@ class StudentDatabase:
         """
         Prints the report of all students.
 
+        >>> db.report_all()
+        | STUDENT ID | Full name            | Course name | Mark
+        | 1001       | John Doe             | CS101       | 85
+        | 1002       | Jane Doe             | CS101       | 90
+        | 1003       | John Smith           | CS101       | 75
+        ...
+
         :return: None
         """
         print(hashtags)
@@ -231,6 +285,13 @@ class StudentDatabase:
 
     def report_by_course(self, course_name: str) -> None:
         """Prints the report of students who are enrolled in a specific course.
+
+        >>> db.report_by_course('CS101')
+        | STUDENT ID | Full name            | Course name | Mark
+        | 1001       | John Doe             | CS101       | 85
+        | 1002       | Jane Doe             | CS101       | 90
+        | 1003       | John Smith           | CS101       | 75
+        ...
 
         :param course_name: The name of the course.
         :return: None
@@ -254,6 +315,15 @@ class StudentDatabase:
 
     def individual_report(self, _id: str) -> None:
         """Prints the report of a specific student.
+
+        >>> db.individual_report('1001')
+        | STUDENT ID: 1001
+        | Full name: John Doe
+        | Average: 85.0
+        | Course name | Mark
+        | CS101       | 85
+        | CS102       | 80
+        ...
 
         :param _id: The ID of the student.
         :return: None
@@ -282,6 +352,13 @@ class StudentDatabase:
         """
         Prints the report of students who failed one or more courses.
 
+        >>> db.report_failed_courses()
+        Student ID | Full name       | Failed courses | Mark
+        1001       | John Doe        | CS101          | 45
+        1002       | Jane Doe        | CS101          | 40
+        1003       | John Smith      | CS101          | 35
+        ...
+
         :return: None
         """
         print("Student ID | Full name       | Failed courses | Mark")
@@ -300,6 +377,11 @@ class StudentDatabase:
         """
         Prints the report of student(s) whose average is the highest in the school.
 
+        >>> db.report_highest_average()
+        Student ID | Full name       | Average
+        1002       | Jane Doe        | 90.0
+        ...
+
         :return: None
         """
         averages = {_id: sum([course[3] for course in courses]) / len(courses) for _id, courses in
@@ -316,6 +398,11 @@ class StudentDatabase:
         """
         Prints the report of student(s) whose average is the lowest in the school.
 
+        >>> db.report_lowest_average()
+        Student ID | Full name       | Average
+        1003       | John Smith      | 65.0
+        ...
+        
         :return: None
         """
         averages = {_id: sum([course[3] for course in courses]) / len(courses) for _id, courses in
@@ -331,6 +418,12 @@ class StudentDatabase:
     def report_top_mark_in_each_course(self) -> None:
         """
         Prints the report of students who got the top mark in each course.
+
+        >>> db.report_top_mark_in_each_course()
+        Student ID | Full name       | Course  | Mark
+        1002       | Jane Doe        | CS101   | 100
+        1001       | John Doe        | CS102   | 95
+        ...
 
         :return: None
         """

@@ -5,13 +5,28 @@ class StudentRegistrySystem:
     def __init__(self, filename: str):
         """Initialize the StudentRegistrySystem class with a StudentDatabase instance.
 
-        Args:
-            filename (str): Name of the file that contains the students' data.
+        :param filename: Name of the file that contains the students' data.
         """
         self.db = StudentDatabase(filename)
+        print(self.db.students.get('1001'))
 
-    def menu(self):
-        """Display the menu and handle the user options."""
+    def menu(self) -> None:
+        """
+        Display the menu and handle the user options.
+
+        >>> srs = StudentRegistrySystem('files/student_data.txt')
+        >>> srs.menu()
+        ------Braemar College student registry system ------
+        A. Add student
+        B. Edit student
+        C. Delete student
+        D. Report
+        E. Special Report
+        Q. Quit
+        Enter one of these options (A-E or Q):
+
+        :return: None
+        """
         while True:
             print("------Braemar College student registry system ------")
             print("A. Add student")
@@ -43,8 +58,8 @@ class StudentRegistrySystem:
                     _id = input("Enter the student's ID: ")
                     self.db.individual_report(_id)
                 else:
-                    print("Invalid option. Please try again.")
-            if option.upper() == 'E':
+                    print("Invalid argument. Please try again.")
+            elif option.upper() == 'E':
                 print("1. Students who failed one or more courses")
                 print("2. Student(s) whose Average is the highest in school")
                 print("3. Student(s) whose Average is lowest in School")
